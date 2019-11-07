@@ -22,19 +22,19 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.icefrog.async.export.component.ApiCacheQueue;
-import com.icefrog.async.export.component.OssComponent;
 import com.icefrog.async.export.dal.entity.SysExportConf;
 import com.icefrog.async.export.dal.entity.SysExportPlan;
 import com.icefrog.async.export.dal.mapper.SysExportConfMapper;
 import com.icefrog.async.export.dal.mapper.SysExportPlanMapper;
 import com.icefrog.async.export.dto.ExportApiReqDto;
 import com.icefrog.async.export.dto.IOResultDto;
+import com.icefrog.async.export.handler.dictionary.IDictionaryReplace;
+import com.icefrog.async.export.handler.filemanage.IFileManager;
 import com.icefrog.async.export.integration.annotation.DictionaryScan;
 import com.icefrog.async.export.integration.enums.PlanStatus;
 import com.icefrog.async.export.integration.export.BaseResultSet;
 import com.icefrog.async.export.integration.export.IExport;
 import com.icefrog.async.export.integration.spring.ApplicationContextBeanProvider;
-import com.icefrog.async.export.redis.JedisService;
 import com.icefrog.async.export.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -64,10 +64,10 @@ public class QueueConsumerRunnable implements Runnable {
     private SysExportPlanMapper sysExportPlanMapper;
 
     @Resource
-    private JedisService jedisService;
+    private IDictionaryReplace dictionaryReplace;
 
     @Resource
-    private OssComponent ossComponent;
+    private IFileManager fileManager;
 
     @Resource
     private ApplicationContextBeanProvider applicationContextBeanProvider;
@@ -96,17 +96,6 @@ public class QueueConsumerRunnable implements Runnable {
     @Value("${export.fileSuffix:xlsx}")
     private String fileSuffix;
 
-    /***
-     * oss存储目录前缀. 默认：export/download
-     */
-    @Value("${export.prefixUrl:export/download}")
-    private String prefixUrl;
-
-    /***
-     * 国际化默认编码标记
-     */
-    @Value("${i18n.default.mark}")
-    private String i18nDefaultMark;
 
     @Override
     public void run() {
@@ -178,22 +167,7 @@ public class QueueConsumerRunnable implements Runnable {
                             // 存在字典扫描
                             String code = annotation.code();
                             if(StringUtils.isNotBlank(code)) {
-                                String i18nConfJson = jedisService.init().hget("dictItemCache", code + "_" + propertyVal);
-                                if (StringUtils.isNotBlank(i18nConfJson)) {
-                                    Map<String, Object> i18nConfMap = JSON.parseObject(i18nConfJson).getInnerMap();
-                                    Object i18nVal = i18nConfMap.get(plan.getI18n());
-                                    if (i18nVal == null) {
-                                        // 获取默认国际化配置再度获取一次
-                                        i18nVal = i18nConfMap.get(i18nDefaultMark);
-                                        if (i18nVal != null) {
-                                            // 替换原字典值
-                                            propertyVal = i18nVal;
-                                        }
-                                    } else {
-                                        // 替换原字典值
-                                        propertyVal = i18nVal;
-                                    }
-                                }
+                                propertyVal = dictionaryReplace.replace(code, String.valueOf(propertyVal));
                             }
                         }
                         item.put(property, String.valueOf(propertyVal));
@@ -207,8 +181,8 @@ public class QueueConsumerRunnable implements Runnable {
                 // 1. 将文件写入临时磁盘区域
                 IOResultDto ioResultDto = writeFile(resultSet, columnConf);
 
-                // 2. 将文件上传到OSS
-                String url = uploadToOss(ioResultDto.getAbsolutePath(), ioResultDto.getFileName());
+                // 2. 将文件交由自定义文件管理器处理
+                String url = fileManager.process(ioResultDto.getDir(), ioResultDto.getFileName());
 
                 // 3. 从磁盘上移除临时文件
                 removeFile(ioResultDto.getAbsolutePath());
@@ -255,6 +229,12 @@ public class QueueConsumerRunnable implements Runnable {
 
         // 3. 构建文件名与文件临时目录
         String fileName = IdUtil.fastSimpleUUID() + "." + fileSuffix;
+
+        File tempDirFile = new File(tempDir);
+        if(!tempDirFile.exists()) {
+            tempDirFile.mkdirs();
+        }
+
         String absolutePath = tempDir + File.separator + fileName;
 
         // 写出到本地磁盘
@@ -265,18 +245,6 @@ public class QueueConsumerRunnable implements Runnable {
         result.setFileName(fileName);
         result.setAbsolutePath(absolutePath);
         return result;
-    }
-
-    /***
-     * 上传文件到oss服务器
-     *
-     * @param absolutePath 文件本地绝对路径。 含文件名称以及后缀
-     * @param fileName 文件名称。 含后缀
-     * @return 可访问的资源地址（http url）
-     */
-    private String uploadToOss(String absolutePath, String fileName) {
-
-        return ossComponent.putObject(prefixUrl, fileName, absolutePath);
     }
 
     /***
