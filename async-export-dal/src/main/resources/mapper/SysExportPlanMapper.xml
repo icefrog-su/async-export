@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icefrog.async.export.dal.mapper.SysExportPlanMapper" >
+  <resultMap id="BaseResultMap" type="com.icefrog.async.export.dal.entity.SysExportPlan" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="bean_id" property="beanId" jdbcType="VARCHAR" />
+    <result column="method_name" property="methodName" jdbcType="VARCHAR" />
+    <result column="request_params" property="requestParams" jdbcType="VARCHAR" />
+    <result column="line_count" property="lineCount" jdbcType="BIGINT" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="plan_status" property="planStatus" jdbcType="VARCHAR" />
+    <result column="retry_qty" property="retryQty" jdbcType="INTEGER" />
+    <result column="i18n" property="i18n" jdbcType="VARCHAR" />
+    <result column="failed_msg" property="failedMsg" jdbcType="VARCHAR" />
+    <result column="tm_create" property="tmCreate" jdbcType="TIMESTAMP" />
+    <result column="tm_success" property="tmSuccess" jdbcType="TIMESTAMP" />
+    <result column="is_del" property="isDel" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, bean_id, method_name, request_params, line_count, url, plan_status,
+    retry_qty, i18n, failed_msg, tm_create, tm_success, is_del
+  </sql>
+  <select id="queryPlanWithStatus" resultMap="BaseResultMap">
+    select * from sys_export_plan where is_del = 0 and plan_status = #{planStatus} order by tm_create asc
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_export_plan
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_export_plan
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.icefrog.async.export.dal.entity.SysExportPlan" >
+    insert into sys_export_plan (id, user_id, bean_id,
+      method_name, request_params, line_count,
+      url, plan_status, retry_qty,
+      i18n, failed_msg, tm_create,
+      tm_success, is_del)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{beanId,jdbcType=VARCHAR},
+      #{methodName,jdbcType=VARCHAR}, #{requestParams,jdbcType=VARCHAR}, #{lineCount,jdbcType=BIGINT},
+      #{url,jdbcType=VARCHAR}, #{planStatus,jdbcType=VARCHAR}, #{retryQty,jdbcType=INTEGER},
+      #{i18n,jdbcType=VARCHAR}, #{failedMsg,jdbcType=VARCHAR}, #{tmCreate,jdbcType=TIMESTAMP},
+      #{tmSuccess,jdbcType=TIMESTAMP}, #{isDel,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icefrog.async.export.dal.entity.SysExportPlan" >
+    insert into sys_export_plan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="beanId != null" >
+        bean_id,
+      </if>
+      <if test="methodName != null" >
+        method_name,
+      </if>
+      <if test="requestParams != null" >
+        request_params,
+      </if>
+      <if test="lineCount != null" >
+        line_count,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="planStatus != null" >
+        plan_status,
+      </if>
+      <if test="retryQty != null" >
+        retry_qty,
+      </if>
+      <if test="i18n != null" >
+        i18n,
+      </if>
+      <if test="failedMsg != null" >
+        failed_msg,
+      </if>
+      <if test="tmCreate != null" >
+        tm_create,
+      </if>
+      <if test="tmSuccess != null" >
+        tm_success,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="beanId != null" >
+        #{beanId,jdbcType=VARCHAR},
+      </if>
+      <if test="methodName != null" >
+        #{methodName,jdbcType=VARCHAR},
+      </if>
+      <if test="requestParams != null" >
+        #{requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="lineCount != null" >
+        #{lineCount,jdbcType=BIGINT},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="planStatus != null" >
+        #{planStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="retryQty != null" >
+        #{retryQty,jdbcType=INTEGER},
+      </if>
+      <if test="i18n != null" >
+        #{i18n,jdbcType=VARCHAR},
+      </if>
+      <if test="failedMsg != null" >
+        #{failedMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="tmCreate != null" >
+        #{tmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tmSuccess != null" >
+        #{tmSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icefrog.async.export.dal.entity.SysExportPlan" >
+    update sys_export_plan
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="beanId != null" >
+        bean_id = #{beanId,jdbcType=VARCHAR},
+      </if>
+      <if test="methodName != null" >
+        method_name = #{methodName,jdbcType=VARCHAR},
+      </if>
+      <if test="requestParams != null" >
+        request_params = #{requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="lineCount != null" >
+        line_count = #{lineCount,jdbcType=BIGINT},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="planStatus != null" >
+        plan_status = #{planStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="retryQty != null" >
+        retry_qty = #{retryQty,jdbcType=INTEGER},
+      </if>
+      <if test="i18n != null" >
+        i18n = #{i18n,jdbcType=VARCHAR},
+      </if>
+      <if test="failedMsg != null" >
+        failed_msg = #{failedMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="tmCreate != null" >
+        tm_create = #{tmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tmSuccess != null" >
+        tm_success = #{tmSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icefrog.async.export.dal.entity.SysExportPlan" >
+    update sys_export_plan
+    set user_id = #{userId,jdbcType=BIGINT},
+      bean_id = #{beanId,jdbcType=VARCHAR},
+      method_name = #{methodName,jdbcType=VARCHAR},
+      request_params = #{requestParams,jdbcType=VARCHAR},
+      line_count = #{lineCount,jdbcType=BIGINT},
+      url = #{url,jdbcType=VARCHAR},
+      plan_status = #{planStatus,jdbcType=VARCHAR},
+      retry_qty = #{retryQty,jdbcType=INTEGER},
+      i18n = #{i18n,jdbcType=VARCHAR},
+      failed_msg = #{failedMsg,jdbcType=VARCHAR},
+      tm_create = #{tmCreate,jdbcType=TIMESTAMP},
+      tm_success = #{tmSuccess,jdbcType=TIMESTAMP},
+      is_del = #{isDel,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

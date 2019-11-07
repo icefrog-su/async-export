@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.icefrog</groupId>
+    <artifactId>async-export</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.icefrog</groupId>
+  <artifactId>async-export-handler</artifactId>
+  <version>${async.export.handler.version}</version>
+  <packaging>jar</packaging>
+
+  <name>async-export-handler</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.icefrog</groupId>
+      <artifactId>async-export-dal</artifactId>
+      <version>${async.export.dal.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.icefrog</groupId>
+      <artifactId>async-export-integration</artifactId>
+      <version>${async.export.integration.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+
+  </build>
+</project>

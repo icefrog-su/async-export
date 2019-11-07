@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.icefrog</groupId>
+    <artifactId>async-export</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.icefrog</groupId>
+  <artifactId>async-export-dal</artifactId>
+  <version>${async.export.dal.version}</version>
+  <packaging>jar</packaging>
+
+  <name>async-export-dal</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+      <dependency>
+          <groupId>org.mybatis</groupId>
+          <artifactId>mybatis</artifactId>
+          <version>3.4.5</version>
+      </dependency>
+      <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>druid</artifactId>
+          <version>1.1.20</version>
+      </dependency>
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.mybatis</groupId>
+          <artifactId>mybatis-spring</artifactId>
+          <version>1.3.2</version>
+      </dependency>
+      <dependency>
+          <groupId>org.mybatis.spring.boot</groupId>
+          <artifactId>mybatis-spring-boot-starter</artifactId>
+          <version>1.3.2</version>
+      </dependency>
+  </dependencies>
+
+  <build>
+      <resources>
+          <resource>
+              <directory>src/main/java</directory>
+              <includes>
+                  <include>**/*.properties</include>
+                  <include>**/*.xml</include>
+              </includes>
+          </resource>
+          <resource>
+              <directory>src/main/resources</directory>
+              <includes>
+                  <include>**/*.properties</include>
+                  <include>**/*.txt</include>
+                  <include>**/*.xml</include>
+              </includes>
+          </resource>
+      </resources>
+  </build>
+</project>
