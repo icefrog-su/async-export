@@ -38,3 +38,10 @@ create table wms.sys_export_plan
 alter table wms.sys_export_plan
     add primary key (id);
 
+
+
+-- 执行此SQL可直接运行基本Demo
+INSERT INTO sys_export_conf (id, column_conf_json, bean_id, method_name, create_id, tm_create, update_id, tm_update, remark, is_del) VALUES ('test11111', '{
+	"testName":"测试名称",
+	"testContent":"测试内容"
+}', 'exampleHandler', null, null, '2019-10-22 09:19:51', null, null, null, 0);
